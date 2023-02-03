@@ -38,7 +38,7 @@ void Triangle::updateShaders(const char* vertexPath, const char* fragmentPath)
 
 void Triangle::render()
 {
-	shaderProgram->use();
+	shaderProgram->bind();
 	VAO->bind();
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 	VAO->unbind();
