@@ -39,6 +39,10 @@
     <ClInclude Include="Src\Triangle.h" />
     <ClInclude Include="Src\VertexArray.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\fragmentShader.glsl" />
+    <None Include="Src\Shaders\vertexShader.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

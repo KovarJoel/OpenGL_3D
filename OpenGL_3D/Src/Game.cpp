@@ -31,6 +31,8 @@ Game::Game(const char* windowTitle, int width, int height)
 		exit(-1);
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
 	box = new ContainerBox;
 }
 
@@ -55,7 +57,7 @@ void Game::handleEvents()
 void Game::render()
 {
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	box->render();
 

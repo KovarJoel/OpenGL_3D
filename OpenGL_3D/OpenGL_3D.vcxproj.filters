@@ -69,4 +69,8 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Src\Shaders\fragmentShader.glsl" />
+    <None Include="Src\Shaders\vertexShader.glsl" />
+  </ItemGroup>
 </Project>
