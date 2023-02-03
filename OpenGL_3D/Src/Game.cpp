@@ -34,14 +34,26 @@ Game::Game(const char* windowTitle, int width, int height)
 	glEnable(GL_DEPTH_TEST);
 
 	shader = new ShaderProgram("Src\\Shaders\\vertexShader.glsl", "Src\\Shaders\\fragmentShader.glsl");
-	cube = new Cube(1.0f, "Src\\Textures\\containerBox.jpg");
-	box = new ContainerBox();
+
+	projection = glm::mat4(1.0f);
+	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+	view = glm::mat4(1.0f);
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+
+	for (int i = 0; i < cubePositions.size(); i++)
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		model = glm::rotate(model, 0.5f * i * (float)glfwGetTime(), glm::vec3(1.0f, 1.5f, 0.0f));
+		cubes.push_back(new Cube(1.0f, "Src\\Textures\\containerBox.jpg"));
+		cubes.at(i)->setMatrix4Uniforms(model, view, projection);
+	}
 }
 
 Game::~Game()
 {
-	delete cube;
-	delete box;
+	for (auto& c : cubes)
+		delete c;
 	delete shader;
 
 	glfwDestroyWindow(window);
@@ -61,22 +73,16 @@ void Game::render()
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//shader->use();
-	//
-	//model = glm::mat4(1.0f);
-	//model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-	//model = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 3.0f, 0.0f));
-	//projection = glm::mat4(1.0f);
-	//projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
-	//view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-	//
-	//shader->setMatrix4Uniform("model", { model });
-	//shader->setMatrix4Uniform("view", { view });
-	//shader->setMatrix4Uniform("projection", { projection });
-	//
-	//cube->render();
-	box->render();
+	for (int i = 0; i < cubePositions.size(); i++)
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, cubePositions[i]);
+		model = glm::rotate(model, 0.5f * (i + 1) * (float)glfwGetTime(), glm::vec3(1.0f, 1.5f, 0.0f));
 
+		cubes[i]->setModelMatrix(model);
+		cubes[i]->render();
+	}
+	
 	glfwSwapBuffers(window);
 }
 
