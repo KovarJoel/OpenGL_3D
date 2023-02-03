@@ -12,17 +12,20 @@ private:
 	float size = 0.0f;
 
 	std::vector<float> vertices;
-	std::vector<GLuint> indices = {
-		0, 1, 2,	2, 3, 0,	// front
-		1, 5, 6,	6, 2, 1,	// right
-		5, 4, 7,	7, 6, 5,	// back
-		4, 0, 3,	3, 7, 4,	// left
-		0, 1, 5,	5, 4, 0,	// top
-		3, 2, 6,	6, 7, 3		// bottom
+	const std::vector<GLuint> indices = {
+		0,   1,  2,      2,  3,  0,     // front
+		4,   5,  6,      6,  7,  4,     // right
+		8,   9, 10,     10, 11,  8,     // back
+		12, 13, 14,     14, 15, 12,     // left
+		16, 17, 18,     18, 19, 16,     // top
+		20, 21, 22,     22, 23, 20      // bottom
 	};
 	//std::vector<Texture> textures;
+	ShaderProgram* shader = nullptr;
 	Texture* text = nullptr;
 	VertexArray* VAO = nullptr;
+
+	glm::mat4 model{}, view{}, projection{};
 
 public:
 	//Cube(float size, float red, float green, float blue, float alpha);
@@ -31,7 +34,8 @@ public:
 	~Cube();
 
 	void setSize(float length);
+	void setModelMatrix(glm::mat4 model);
+	void setMatrix4Uniforms(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
 	
 	void render();
 };
-
