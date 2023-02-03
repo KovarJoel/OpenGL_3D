@@ -36,8 +36,8 @@ public:
 	void setBoolUniform(const char* uniformName, std::vector<bool> values);
 	void setIntUniform(const char* uniformName, std::vector<int> values);
 	void setFloatUniform(const char* uniformName, std::vector<float> values);
-	void setMatrix4Uniform(const char* uniformName, std::vector<glm::mat4> values);
+	void setMatrix4Uniform(const char* uniformName, glm::mat4 values);
 
-	void use();
+	void bind();
 	int getHandle();
 };

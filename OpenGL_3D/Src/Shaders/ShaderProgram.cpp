@@ -169,7 +169,7 @@ void ShaderProgram::update(const char* vertexShaderPath, const char* fragmentSha
 	glDeleteShader(fragment->getHandle());
 }
 
-void ShaderProgram::use()
+void ShaderProgram::bind()
 {
 	glUseProgram(programID);
 }
@@ -266,7 +266,7 @@ void ShaderProgram::setFloatUniform(const char* uniformName, std::vector<float> 
 	}
 }
 
-void ShaderProgram::setMatrix4Uniform(const char* uniformName, std::vector<glm::mat4> values)
+void ShaderProgram::setMatrix4Uniform(const char* uniformName, glm::mat4 values)
 {
 	int location = glGetUniformLocation(programID, uniformName);
 	if (location == -1)
@@ -274,13 +274,8 @@ void ShaderProgram::setMatrix4Uniform(const char* uniformName, std::vector<glm::
 		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_NAME);
 		return;
 	}
-	if (values.size() <= 0)
-	{
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_VALUES);
-		return;
-	}
 
-	glUniformMatrix4fv(location, static_cast<GLsizei>(values.size()), GL_FALSE, glm::value_ptr(values.at(0)));
+	glUniformMatrix4fv(location, 1, GL_FALSE, &values[0][0]);
 }
 
 void ShaderProgram::errorMsg(const char* message, unsigned int errorCode)
