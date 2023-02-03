@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Cube.cpp" />
     <ClCompile Include="Src\ContainerBox.cpp" />
     <ClCompile Include="Src\Game.cpp" />
     <ClCompile Include="Src\main.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="Src\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Cube.h" />
     <ClInclude Include="Src\ContainerBox.h" />
     <ClInclude Include="Src\Game.h" />
     <ClInclude Include="Src\Shaders\Shader.h" />

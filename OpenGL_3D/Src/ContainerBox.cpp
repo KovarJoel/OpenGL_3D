@@ -2,11 +2,14 @@
 
 ContainerBox::ContainerBox()
 {
-	VAO = new VertexArray(sizeof(vertices) / sizeof(vertices[0]), vertices, { 3, 2 });
+	vert.reserve(40);
+	setSize(1.0f);
+
+	VAO = new VertexArray(vert.size(), &vert[0], {3, 2}, indices);
 	shaderProgram = new ShaderProgram("Src\\Shaders\\vertexShader.glsl", "Src\\Shaders\\fragmentShader.glsl");
 	texture1 = new Texture("Src\\Textures\\containerBox.jpg");
 	texture2 = new Texture("Src\\Textures\\awesomeFace.png");
-
+	
 	shaderProgram->use();
 	texture1->bind();
 	shaderProgram->setIntUniform("texture1", { texture1->getHandle() - 1 });
@@ -38,12 +41,29 @@ void ContainerBox::render()
 	shaderProgram->setMatrix4Uniform("view", { view });
 	shaderProgram->setMatrix4Uniform("projection", { projection });
 	VAO->bind();
-	//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glDrawElements(GL_TRIANGLES, vert.size(), GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	VAO->unbind();
 }
 
 void ContainerBox::handleEvents(GLFWwindow* window)
 {
 
+}
+
+void ContainerBox::setSize(float length)
+{
+	float size = length / 2.0f;
+
+	vert = {
+		-size, +size, +size, 0.0f, 1.0f,	// 0
+		+size, +size, +size, 1.0f, 1.0f,	// 1
+		+size, -size, +size, 1.0f, 0.0f,	// 2
+		-size, -size, +size, 0.0f, 0.0f,	// 3
+											// 
+		-size, +size, -size, 0.0f, 1.0f,	// 4
+		+size, +size, -size, 1.0f, 1.0f,	// 5
+		+size, -size, -size, 1.0f, 0.0f,	// 6
+		-size, -size, -size, 0.0f, 0.0f		// 7
+	};
 }

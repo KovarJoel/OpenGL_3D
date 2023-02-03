@@ -280,7 +280,7 @@ void ShaderProgram::setMatrix4Uniform(const char* uniformName, std::vector<glm::
 		return;
 	}
 
-	glUniformMatrix4fv(location, values.size(), GL_FALSE, glm::value_ptr(values.at(0)));
+	glUniformMatrix4fv(location, static_cast<GLsizei>(values.size()), GL_FALSE, glm::value_ptr(values.at(0)));
 }
 
 void ShaderProgram::errorMsg(const char* message, unsigned int errorCode)
