@@ -6,7 +6,6 @@
 #include <conio.h>
 
 #include "Triangle.h"
-#include "ContainerBox.h"
 #include "Cube.h"
 
 class Game
@@ -28,9 +27,8 @@ private:
 	};
 
 	GLFWwindow* window = nullptr;
-	ShaderProgram* shader = nullptr;
-	std::vector<Cube*> cubes;
 
+	std::vector<std::unique_ptr<Cube>> cubes;
 	glm::mat4 model{ 1.0f }, view{ 1.0f }, projection{ 1.0f };
 
 public:

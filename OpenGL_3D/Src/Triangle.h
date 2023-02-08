@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <vector>
 
 #include "Shaders/ShaderProgram.h"
 #include "VertexArray.h"
@@ -9,7 +10,7 @@
 class Triangle
 {
 private:
-	 float vertices[3 * (3 + 3)] = {
+	 std::vector<float> vertices = {
 		 +0.0f, +0.5f, +0.0f, 0.0f, 0.0f, 1.0f,
 		 +0.5f, -0.5f, +0.0f, 1.0f, 0.0f, 0.0f,
 		 -0.5f, -0.5f, +0.0f, 0.0f, 1.0f, 0.0f

@@ -3,25 +3,26 @@
 #include <glad/glad.h>
 #include <stb_image/stb_image.h>
 #include <iostream>
+#include <vector>
+#include "..\Assert.h"
 
 class Texture
 {
 private:
 	GLuint textureID = 0;
 	int width = 0, height = 0, nrChannels = 0;
-	unsigned char* textureData = nullptr;
 
-	enum ERRORS : int
+	enum ERRORS
 	{
 		INVALID_INTERNAL_FORMAT, INVALID_TEXTURE_PATH
 	};
-	const char* const errors[64] = { "INVALID_INTERNAL_FORMAT", "INVALID_TEXTURE_PATH" };
-	void errorMsg(const char* message, unsigned int errorCode);
+	const std::vector<std::string> errorStrings = { "INVALID_INTERNAL_FORMAT", "INVALID_TEXTURE_PATH" };
 public:
-	Texture(const char* texturePath);
+	Texture(const std::string& texturePath);
+	~Texture() = default;
 
-	int getHandle() { return textureID; };
+	GLuint getHandle() const;
 
-	void bind();
+	void bind() const;
 };
 

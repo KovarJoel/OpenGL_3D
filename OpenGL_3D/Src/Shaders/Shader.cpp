@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const char* shaderPath, GLenum shaderType)
+Shader::Shader(const std::string& shaderPath, GLenum shaderType)
 	:shaderPath(shaderPath)
 {
 	int success = 0;
@@ -10,28 +10,28 @@ Shader::Shader(const char* shaderPath, GLenum shaderType)
 	switch (shaderType)
 	{
 	case GL_VERTEX_SHADER:
-		shaderTypeName = _strdup("VERTEX");
+		shaderTypeName = "VERTEX";
 		break;
 	case GL_FRAGMENT_SHADER:
-		shaderTypeName = _strdup("FRAGMENT");
+		shaderTypeName = "FRAGMENT";
 		break;
 	default:
-		errorMsg(nullptr, ERRORS::INVALID_SHADER_TYPE);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_SHADER_TYPE]);
 		return;
 	}
 
-	if (!(shaderPath && strlen(shaderPath)))
+	if (shaderPath.empty() || !shaderPath.size())
 	{
-		errorMsg(nullptr, ERRORS::INVALID_SHADER_FILE);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_SHADER_FILE]);
 		return;
 	}
 
 	std::ifstream file(shaderPath);
 	std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 	file.close();
-	if (!(buffer.c_str() && strlen(buffer.c_str())))
+	if (buffer.empty() || !buffer.size())
 	{
-		errorMsg(nullptr, ERRORS::INVALID_SHADER_FILE);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_SHADER_FILE]);
 		return;
 	}
 	shaderFile = buffer.c_str();
@@ -44,7 +44,7 @@ Shader::Shader(const char* shaderPath, GLenum shaderType)
 	if (!success)
 	{
 		glGetShaderInfoLog(shaderID, 512, NULL, infoLog);
-		errorMsg(infoLog, ERRORS::COMPILING);
+		ASSERT_MSG(errorStrings[ERRORS::COMPILING] + infoLog);
 		return;
 	}
 }
@@ -54,33 +54,25 @@ Shader::~Shader()
 	glDeleteShader(shaderID);
 }
 
-const char* Shader::getPath()
+GLuint Shader::getHandle() const
 {
-	return _strdup(shaderPath);
+	return shaderID;
 }
 
-void Shader::errorMsg(const char* message, unsigned int errorCode)
+std::string Shader::getPath() const
 {
-	std::cout << "\n**************************************************" << std::endl;
-	std::cout << "ERROR::SHADER";
-	if (shaderTypeName)
-		std::cout << "::" << shaderTypeName;
-
-	if (errorCode)
-		std::cout << "::" << errors[errorCode - 1];
-	std::cout << std::endl;
-	if (message && strlen(message))
-		std::cout << message << std::endl;
-
-	std::cout << "\n**************************************************" << std::endl;
+	return shaderPath;
 }
 
-char* Shader::shaderToString(const char* shaderPath)
+std::string Shader::shaderToString(const std::string& shaderPath)
 {
 	std::ifstream file(shaderPath);
 	std::string buffer((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-	if (buffer.c_str() && strlen(buffer.c_str()))
-		return _strdup(buffer.c_str());
-	return nullptr;
+	if (buffer.empty() || !buffer.size())
+	{
+		ASSERT_MSG("INVALID_SHADER_FILE");
+		return std::string();
+	}
+	return buffer;
 }

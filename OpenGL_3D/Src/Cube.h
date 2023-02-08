@@ -21,21 +21,21 @@ private:
 		20, 21, 22,     22, 23, 20      // bottom
 	};
 	//std::vector<Texture> textures;
-	ShaderProgram* shader = nullptr;
-	Texture* text = nullptr;
-	VertexArray* VAO = nullptr;
+	std::unique_ptr<ShaderProgram> shader = nullptr;
+	std::unique_ptr<Texture> texture = nullptr;
+	std::unique_ptr<VertexArray> VAO = nullptr;
 
 	glm::mat4 model{}, view{}, projection{};
 
 public:
 	//Cube(float size, float red, float green, float blue, float alpha);
-	Cube(float size, const char* texture);
+	Cube(float size, const std::string& texturePath);
 	//Cube(float length, std::vector<char*> texturePaths);
-	~Cube();
+	~Cube() = default;
 
 	void setSize(float length);
-	void setModelMatrix(glm::mat4 model);
-	void setMatrix4Uniforms(glm::mat4 model, glm::mat4 view, glm::mat4 projection);
+	void setModelMatrix(const glm::mat4& model);
+	void setMatrix4Uniforms(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection);
 	
-	void render();
+	void render() const;
 };

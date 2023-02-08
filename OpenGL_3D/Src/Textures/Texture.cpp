@@ -1,7 +1,9 @@
 #include "Texture.h"
 
-Texture::Texture(const char* texturePath)
+Texture::Texture(const std::string& texturePath)
 {
+	unsigned char* textureData = nullptr;
+
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -11,11 +13,11 @@ Texture::Texture(const char* texturePath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	
 	stbi_set_flip_vertically_on_load(true);
-	textureData = stbi_load(texturePath, &width, &height, &nrChannels, 0);
-
+	textureData = stbi_load(texturePath.c_str(), &width, &height, &nrChannels, 0);
+	
 	if (!textureData)
 	{
-		errorMsg(nullptr, ERRORS::INVALID_TEXTURE_PATH);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_TEXTURE_PATH]);
 		return;
 	}
 
@@ -29,6 +31,7 @@ Texture::Texture(const char* texturePath)
 		internalFormat = GL_RGBA;
 		break;
 	default:
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_INTERNAL_FORMAT]);
 		break;
 	}
 
@@ -38,22 +41,13 @@ Texture::Texture(const char* texturePath)
 	stbi_image_free(textureData);
 }
 
-void Texture::bind()
+GLuint Texture::getHandle() const
+{
+	return textureID;
+}
+
+void Texture::bind() const
 {
 	glActiveTexture(GL_TEXTURE0 + textureID - 1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-}
-
-void Texture::errorMsg(const char* message, unsigned int errorCode)
-{
-	std::cout << "\n**************************************************" << std::endl;
-	std::cout << "ERROR::TEXTURE";
-
-	if (errorCode)
-		std::cout << "::" << errors[errorCode];
-	std::cout << std::endl;
-	if (message && strlen(message))
-		std::cout << message << std::endl;
-
-	std::cout << "\n**************************************************" << std::endl;
 }

@@ -13,30 +13,29 @@ class ShaderProgram
 {
 private:
 	GLuint programID = 0;
-	Shader* vertex = nullptr;
-	Shader* fragment = nullptr;
+	std::unique_ptr<Shader> vertex = nullptr;
+	std::unique_ptr<Shader> fragment = nullptr;
 
-	enum ERRORS : int
+	enum ERRORS
 	{
-		LINKING = 1, INVALID_SHADER_POINTER, INVALID_SHADER_COUNT, INVALID_UNIFORM_NAME, INVALID_UNIFORM_VALUES
+		LINKING, INVALID_SHADER_PATH, INVALID_SHADER_COUNT, INVALID_UNIFORM_NAME, INVALID_UNIFORM_VALUES
 	};
-	const char* const errors[64] = { "LINKING", "INVALID_SHADER_POINTER", "INVALID_SHADER_COUNT",
+	const std::vector<std::string> errorStrings = { "LINKING", "INVALID_SHADER_PATH", "INVALID_SHADER_COUNT",
 		"INVALID_UNIFORM_NAME", "INVALID_UNIFORM_VALUES" };
-	void errorMsg(const char* message, unsigned int errorCode);
 
 public:
 	//ShaderProgram(size_t count, GLuint* shaders);
 	//ShaderProgram(size_t count, ...);
 	//ShaderProgram(std::vector<Shader> shaderVector);
-	ShaderProgram(const char* vertexShaderPath, const char* fragmentShaderPath);
+	ShaderProgram(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 	~ShaderProgram();
 
-	void update(const char* vertexShaderPath, const char* fragmentShaderPath);
+	void update(const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
 
-	void setBoolUniform(const char* uniformName, std::vector<bool> values);
-	void setIntUniform(const char* uniformName, std::vector<int> values);
-	void setFloatUniform(const char* uniformName, std::vector<float> values);
-	void setMatrix4Uniform(const char* uniformName, glm::mat4 values);
+	void setBoolUniform(const std::string& uniformName, const std::vector<bool>& values);
+	void setIntUniform(const std::string& uniformName, const std::vector<int>& values);
+	void setFloatUniform(const std::string& uniformName, const std::vector<float>& values);
+	void setMatrix4Uniform(const std::string& uniformName, const glm::mat4& values);
 
 	void bind();
 	int getHandle();

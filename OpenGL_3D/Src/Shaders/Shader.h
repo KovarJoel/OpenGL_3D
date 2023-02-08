@@ -4,27 +4,27 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "..\Assert.h"
 
 class Shader
 {
 private:
 	GLuint shaderID = 0;
-	const char* shaderPath = nullptr;
-	char* shaderTypeName = nullptr;
+	std::string shaderPath;
+	std::string shaderTypeName;
 
-	enum ERRORS : int
+	enum ERRORS
 	{
-		INVALID_SHADER_FILE = 1, INVALID_SHADER_TYPE, COMPILING
+		INVALID_SHADER_FILE, INVALID_SHADER_TYPE, COMPILING
 	};
-	const char* const errors[64] = { "INVALID_SHADER_FILE", "INVALID_SHADER_TYPE", "COMPILING", "INVALID_PROGRAM" };
-	void errorMsg(const char* message, unsigned int errorCode);
+	const std::vector<std::string> errorStrings = { "INVALID_SHADER_FILE", "INVALID_SHADER_TYPE", "COMPILING", "INVALID_PROGRAM" };
 
 public:
-	Shader(const char* shaderPath, GLenum shaderType);
+	Shader(const std::string& shaderPath, GLenum shaderType);
 	~Shader();
 
-	GLuint getHandle() { return shaderID; };
-	const char* getPath();
+	GLuint getHandle() const;
+	std::string getPath() const;
 
-	static char* shaderToString(const char* shaderPath);
+	static std::string shaderToString(const std::string& shaderPath);
 };

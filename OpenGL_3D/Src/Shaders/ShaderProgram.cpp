@@ -97,10 +97,17 @@ ShaderProgram::ShaderProgram(std::vector<Shader> shaderVector)
 }
 */
 
-ShaderProgram::ShaderProgram(const char* vertexShaderPath, const char* fragmentShaderPath)
+ShaderProgram::ShaderProgram(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
-	vertex = new Shader(vertexShaderPath, GL_VERTEX_SHADER);
-	fragment = new Shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
+	if (vertexShaderPath.empty())
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_SHADER_PATH] + vertexShaderPath);
+	if (fragmentShaderPath.empty())
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_SHADER_PATH] + fragmentShaderPath);
+	if (vertexShaderPath.empty() || fragmentShaderPath.empty())
+		return;
+
+	vertex.reset(new Shader(vertexShaderPath, GL_VERTEX_SHADER));
+	fragment.reset(new Shader(fragmentShaderPath, GL_FRAGMENT_SHADER));
 
 	int success = 0;
 	char infoLog[512]{};
@@ -115,7 +122,7 @@ ShaderProgram::ShaderProgram(const char* vertexShaderPath, const char* fragmentS
 	if (!success)
 	{
 		glGetProgramInfoLog(programID, 512, NULL, infoLog);
-		errorMsg(infoLog, ERRORS::LINKING);
+		ASSERT_MSG(errorStrings[ERRORS::LINKING] + infoLog);
 	}
 
 	glDeleteShader(vertex->getHandle());
@@ -124,33 +131,28 @@ ShaderProgram::ShaderProgram(const char* vertexShaderPath, const char* fragmentS
 
 ShaderProgram::~ShaderProgram()
 {
-	delete vertex;
-	delete fragment;
-
 	glDeleteProgram(programID);
 }
 
-void ShaderProgram::update(const char* vertexShaderPath, const char* fragmentShaderPath)
+void ShaderProgram::update(const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
 	int success = 0;
 	char infoLog[512]{};
 
+	if (vertexShaderPath.empty() && fragmentShaderPath.empty())
+		return;
+
 	glDeleteProgram(programID);
 	programID = 0;
 
-	const char* vertexPath = vertex->getPath();
-	delete vertex;
-	if (vertexShaderPath)
-		vertex = new Shader(vertexShaderPath, GL_VERTEX_SHADER);
-	else
-		vertex = new Shader(vertexPath, GL_VERTEX_SHADER);
-
-	const char* fragmentPath = fragment->getPath();
-	delete fragment;
-	if (fragmentShaderPath)
-		fragment = new Shader(fragmentShaderPath, GL_FRAGMENT_SHADER);
-	else
-		fragment = new Shader(fragmentPath, GL_FRAGMENT_SHADER);
+	if (!vertexShaderPath.empty())
+	{
+		vertex.reset(new Shader(vertexShaderPath, GL_VERTEX_SHADER));
+	}
+	if (!fragmentShaderPath.empty())
+	{
+		fragment.reset(new Shader(fragmentShaderPath, GL_FRAGMENT_SHADER));
+	}
 
 	programID = glCreateProgram();
 
@@ -162,7 +164,7 @@ void ShaderProgram::update(const char* vertexShaderPath, const char* fragmentSha
 	if (!success)
 	{
 		glGetProgramInfoLog(programID, 512, NULL, infoLog);
-		errorMsg(infoLog, ERRORS::LINKING);
+		ASSERT_MSG(errorStrings[ERRORS::LINKING] + infoLog);
 	}
 
 	glDeleteShader(vertex->getHandle());
@@ -179,12 +181,12 @@ int ShaderProgram::getHandle()
 	return programID;
 };
 
-void ShaderProgram::setBoolUniform(const char* uniformName, std::vector<bool> values)
+void ShaderProgram::setBoolUniform(const std::string& uniformName, const std::vector<bool>& values)
 {
-	int location = glGetUniformLocation(programID, uniformName);
+	int location = glGetUniformLocation(programID, uniformName.c_str());
 	if (location == -1)
 	{
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_NAME);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_NAME] + uniformName);
 		return;
 	}
 
@@ -203,17 +205,17 @@ void ShaderProgram::setBoolUniform(const char* uniformName, std::vector<bool> va
 		glUniform4i(location, values.at(0), values.at(1), values.at(2), values.at(3));
 		break;
 	default:
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_VALUES);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_VALUES] + uniformName);
 		return;
 	}
 }
 
-void ShaderProgram::setIntUniform(const char* uniformName, std::vector<int> values)
+void ShaderProgram::setIntUniform(const std::string& uniformName, const std::vector<int>& values)
 {
-	int location = glGetUniformLocation(programID, uniformName);
+	int location = glGetUniformLocation(programID, uniformName.c_str());
 	if (location == -1)
 	{
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_NAME);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_NAME] + uniformName);
 		return;
 	}
 
@@ -232,17 +234,17 @@ void ShaderProgram::setIntUniform(const char* uniformName, std::vector<int> valu
 		glUniform4i(location, values.at(0), values.at(1), values.at(2), values.at(3));
 		break;
 	default:
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_VALUES);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_VALUES] + uniformName);
 		return;
 	}
 }
 
-void ShaderProgram::setFloatUniform(const char* uniformName, std::vector<float> values)
+void ShaderProgram::setFloatUniform(const std::string& uniformName, const std::vector<float>& values)
 {
-	int location = glGetUniformLocation(programID, uniformName);
+	int location = glGetUniformLocation(programID, uniformName.c_str());
 	if (location == -1)
 	{
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_NAME);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_NAME] + uniformName);
 		return;
 	}
 
@@ -261,33 +263,19 @@ void ShaderProgram::setFloatUniform(const char* uniformName, std::vector<float> 
 		glUniform4f(location, values.at(0), values.at(1), values.at(2), values.at(3));
 		break;
 	default:
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_VALUES);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_VALUES] + uniformName);
 		return;
 	}
 }
 
-void ShaderProgram::setMatrix4Uniform(const char* uniformName, glm::mat4 values)
+void ShaderProgram::setMatrix4Uniform(const std::string& uniformName, const glm::mat4& values)
 {
-	int location = glGetUniformLocation(programID, uniformName);
+	int location = glGetUniformLocation(programID, uniformName.c_str());
 	if (location == -1)
 	{
-		errorMsg(uniformName, ERRORS::INVALID_UNIFORM_NAME);
+		ASSERT_MSG(errorStrings[ERRORS::INVALID_UNIFORM_NAME] + uniformName);
 		return;
 	}
 
 	glUniformMatrix4fv(location, 1, GL_FALSE, &values[0][0]);
-}
-
-void ShaderProgram::errorMsg(const char* message, unsigned int errorCode)
-{
-	std::cout << "\n**************************************************" << std::endl;
-	std::cout << "ERROR::SHADER_PROGRAM";
-
-	if (errorCode)
-		std::cout << "::" << errors[errorCode];
-	std::cout << std::endl;
-	if (message && strlen(message))
-		std::cout << message << std::endl;
-
-	std::cout << "\n**************************************************" << std::endl;
 }

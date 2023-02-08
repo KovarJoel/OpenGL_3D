@@ -1,20 +1,13 @@
 #include "Cube.h"
 
-Cube::Cube(float length, const char* texturePath)
+Cube::Cube(float length, const std::string& texturePath)
 {	
 	vertices.reserve(120);
 	setSize(length);
 
-	shader = new ShaderProgram("Src\\Shaders\\vertexShader.glsl", "Src\\Shaders\\fragmentShader.glsl");
-	text = new Texture(texturePath);
-	VAO = new VertexArray(vertices.size(), &vertices[0], { 3, 2 }, indices);
-}
-
-Cube::~Cube()
-{
-	delete VAO;
-	delete text;
-	delete shader;
+	shader = std::make_unique<ShaderProgram>("Src\\Shaders\\vertexShader.glsl", "Src\\Shaders\\fragmentShader.glsl");
+	texture = std::make_unique<Texture>(texturePath);
+	VAO = std::make_unique<VertexArray>(vertices, std::vector<GLuint>{ 3, 2 }, indices);
 }
 
 void Cube::setSize(float length)
@@ -56,14 +49,14 @@ void Cube::setSize(float length)
 	};
 }
 
-void Cube::setModelMatrix(glm::mat4 model)
+void Cube::setModelMatrix(const glm::mat4& model)
 {
 	this->model = model;
 	shader->bind();
 	shader->setMatrix4Uniform("model", model);
 }
 
-void Cube::setMatrix4Uniforms(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
+void Cube::setMatrix4Uniforms(const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection)
 {
 	this->model = model;
 	this->view = view;
@@ -75,13 +68,13 @@ void Cube::setMatrix4Uniforms(glm::mat4 model, glm::mat4 view, glm::mat4 project
 	shader->setMatrix4Uniform("projection", projection);
 }
 
-void Cube::render()
+void Cube::render() const
 {
 	shader->bind();
-	text->bind();
+	texture->bind();
 	VAO->bind();
 
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
 
 	VAO->unbind();
 }

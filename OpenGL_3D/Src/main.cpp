@@ -2,13 +2,11 @@
 
 int main()
 {
-	Game* game = new Game("Triangles", 800, 600);
-
+	auto game = std::make_unique<Game>("Triangles", 800, 600);
+	
 	while (game->isRunning())
 	{
 		game->handleEvents();
 		game->render();
 	}
-	
-	delete game;
 }

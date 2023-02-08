@@ -19,7 +19,7 @@ Triangle::~Triangle()
 
 void Triangle::init()
 {
-	VAO = new VertexArray(sizeof(vertices) / sizeof(vertices[0]), vertices, {3, 3});
+	VAO = new VertexArray(vertices, {3, 3});
 	shaderProgram = new ShaderProgram("Src\\Shaders\\vertexShader.glsl", "Src\\Shaders\\fragmentShader.glsl");
 }
 
