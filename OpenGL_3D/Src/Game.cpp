@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(const char* windowTitle, int width, int height)
+Game::Game(const std::string& windowTitle, int width, int height)
 	:width(width), height(height)
 {
 	if (!glfwInit())
@@ -15,7 +15,7 @@ Game::Game(const char* windowTitle, int width, int height)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-	window = glfwCreateWindow(width, height, windowTitle, NULL, NULL);
+	window = glfwCreateWindow(width, height, windowTitle.c_str(), NULL, NULL);
 	if (!window)
 	{
 		std::cout << "ERROR::WINDOW::INIT" << std::endl;
@@ -32,6 +32,8 @@ Game::Game(const char* windowTitle, int width, int height)
 	}
 
 	glEnable(GL_DEPTH_TEST);
+
+	camera = std::make_unique<Camera>(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 	projection = glm::mat4(1.0f);
 	projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -61,6 +63,8 @@ void Game::handleEvents()
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	camera->handleEvents(window);
 }
 
 void Game::render()
@@ -74,7 +78,10 @@ void Game::render()
 		model = glm::translate(model, cubePositions[i]);
 		model = glm::rotate(model, 0.5f * (i + 1) * (float)glfwGetTime(), glm::vec3(1.0f, 1.5f, 0.0f));
 
-		cubes[i]->setModelMatrix(model);
+		//cubes[i]->setModelMatrix(model);
+		auto temp1 = view;
+		auto temp2 = camera->getViewMatrix();
+		cubes[i]->setMatrix4Uniforms(model, camera->getViewMatrix(), projection);
 		cubes[i]->render();
 	}
 	

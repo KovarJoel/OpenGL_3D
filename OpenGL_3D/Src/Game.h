@@ -5,7 +5,7 @@
 
 #include <conio.h>
 
-#include "Triangle.h"
+#include "Camera.h"
 #include "Cube.h"
 
 class Game
@@ -27,12 +27,13 @@ private:
 	};
 
 	GLFWwindow* window = nullptr;
-
+	
+	std::unique_ptr<Camera> camera = nullptr;
 	std::vector<std::unique_ptr<Cube>> cubes;
 	glm::mat4 model{ 1.0f }, view{ 1.0f }, projection{ 1.0f };
 
 public:
-	Game(const char* windowTitle, int width, int height);
+	Game(const std::string& windowTitle, int width, int height);
 	~Game();
 
 	void handleEvents();

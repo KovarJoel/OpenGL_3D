@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Camera.cpp" />
     <ClCompile Include="Src\Assert.cpp" />
     <ClCompile Include="Src\Cube.cpp" />
     <ClCompile Include="Src\Game.cpp" />
@@ -32,6 +33,7 @@
     <ClCompile Include="Src\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Camera.h" />
     <ClInclude Include="Src\Assert.h" />
     <ClInclude Include="Src\Cube.h" />
     <ClInclude Include="Src\Game.h" />
