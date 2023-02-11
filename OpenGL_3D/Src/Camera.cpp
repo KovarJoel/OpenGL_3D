@@ -26,15 +26,16 @@ glm::mat4 Camera::getViewMatrix() const
 void Camera::handleEvents(GLFWwindow* window)
 {
 	double xPos, yPos;
+	float deltaTime = (float)DeltaTime::get();
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
 	{
 		glfwGetCursorPos(window, &xPos, &yPos);
 
-		double sens = 0.1f;
+		double sens = 11.0f;
 
-		YAW += sens * (oldX - xPos);
-		PITCH -= sens * (oldY - yPos);
+		YAW += deltaTime * sens * (oldX - xPos);
+		PITCH -= deltaTime * sens * (oldY - yPos);
 
 		oldX = xPos;
 		oldY = yPos;
@@ -54,21 +55,21 @@ void Camera::handleEvents(GLFWwindow* window)
 
 	glfwGetCursorPos(window, &oldX, &oldY);
 
-	float speed = 0.001f;
+	float speed = 8.0f;
 	if (glfwGetKey(window, GLFW_KEY_W))
 	{
-		position += speed * front;
+		position += deltaTime * speed * front;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A))
 	{
-		position -= speed * glm::normalize(glm::cross(front, up));
+		position -= deltaTime * speed * glm::normalize(glm::cross(front, up));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S))
 	{
-		position -= speed * front;
+		position -= deltaTime * speed * front;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D))
 	{
-		position += speed * glm::normalize(glm::cross(front, up));
+		position += deltaTime * speed * glm::normalize(glm::cross(front, up));
 	}
 }
