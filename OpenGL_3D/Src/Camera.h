@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "DeltaTime.h"
-
 class Camera
 {
 private:
