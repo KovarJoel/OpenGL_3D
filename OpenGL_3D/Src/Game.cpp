@@ -86,6 +86,8 @@ void Game::render()
 	}
 	
 	glfwSwapBuffers(window);
+
+	DeltaTime::set(glfwGetTime());
 }
 
 bool Game::isRunning()
