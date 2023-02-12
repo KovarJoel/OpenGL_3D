@@ -10,6 +10,8 @@ Assert::assertGL(__FILE__, __LINE__, __FUNCTION__, #x)
 class Assert
 {
 private:
+	static void lineSplit(std::string& string);
+
 	Assert() = default;
 	Assert(const Assert& original) = default;
 	~Assert() = default;
